@@ -17,5 +17,13 @@ open class Gc
   //$ Get the total number of roots.
   fun gc_get_root_count : unit -> ulong = "PTF gcp->collector->get_root_count()"
     requires property "needs_gc";
+
+  // Use Felix's GC to track pointers allocated by other libraries.
+  proc add_foreign[T] : &T = "PTF gcp->collector->add_foreign((void *)$1, &@?1);"
+    requires property "needs_gc";
+  proc remove_foreign[T] : &T = "PTF gcp->collector->remove_foreign((void *)$1);"
+    requires property "needs_gc";
+
+
 }
 

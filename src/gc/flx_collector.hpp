@@ -54,6 +54,8 @@ protected:
   void impl_add_root(void *memory);
   void impl_remove_root(void *memory);
 
+  void impl_add_foreign(void *memory, gc_shape_t const *shape, unsigned long nobj);
+
   //
   void check();
 
@@ -73,6 +75,10 @@ private:
   // add and remove roots
   void v_add_root(void *memory);
   void v_remove_root(void *memory);
+  
+  void v_add_foreign(void *memory, gc_shape_t const *shape);
+  void v_remove_foreign(void *memory);
+
   void v_free_all_mem();
 
   // statistics

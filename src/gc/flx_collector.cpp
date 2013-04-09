@@ -55,6 +55,14 @@ void flx_collector_t::v_remove_root(void *memory) {
   impl_remove_root(memory);
 }
 
+void flx_collector_t::v_add_foreign(void *memory, gc_shape_t const *shape) {
+  impl_add_foreign(memory, shape, 1);
+}
+
+void flx_collector_t::v_remove_foreign(void *memory) {
+  unlink(memory);
+}
+
 void flx_collector_t::v_free_all_mem() {
   //fprintf(stderr, "Dispatching to impl free all mem\n");
   impl_free_all_mem();
@@ -142,6 +150,23 @@ void * flx_collector_t::impl_allocate(gc_shape_t const *shape, unsigned long nob
   //fprintf(stderr,"ADDING %ld to allocation amt, result %ld\n",long(amt),long(allocation_amt));
   // return client memory pointer
   return fp;
+}
+
+void flx_collector_t::impl_add_foreign(void *memory, gc_shape_t const *shape, unsigned long nobj)
+{
+  std::size_t amt = nobj * shape->amt * shape->count;
+  if(amt & 1) ++amt; // round up to even number
+
+  allocation_count++;
+  allocation_amt += amt;
+
+  Word_t *p = (Word_t*)(void*)JudyLIns(&j_shape,(Word_t)memory,&je);
+  *p = ((Word_t)(void*)shape) | (parity & 1);
+  if (nobj != 1uL) // array
+  {
+    Word_t *p = (Word_t*)(void*)JudyLIns(&j_nalloc,(Word_t)memory,&je);
+    *p = nobj;
+  }
 }
 
 void flx_collector_t::set_used(void *memory, unsigned long n)
@@ -387,13 +412,16 @@ unsigned long flx_collector_t::sweep()
   {
     if((*pshape & 1) == (parity & 1UL))
     {
+      gc_shape_t const *shape = (gc_shape_t const *)(*pshape & ~1UL);
       if(debug)
-        fprintf(stderr,"Garbage %p=%s\n",current,((gc_shape_t const *)(*pshape & ~1UL))->cname);
+        fprintf(stderr,"Garbage %p=%s\n",current,shape->cname);
       ++ sweeped;
       //fprintf(stderr,"Unlinking ..\n");
       unlink(current);
-      //fprintf(stderr,"Posting delete ..\n");
-      post_delete(current);
+      if ( !(shape->flags & gc_flags_persistent) ) {
+        //fprintf(stderr,"Posting delete ..\n");
+        post_delete(current);
+      }
       //fprintf(stderr,"Reaping done\n");
     }
     else

@@ -148,6 +148,15 @@ struct GC_EXTERN collector_t
   void remove_root(void *memory) {
     v_remove_root(memory);
   }
+  
+  // Routines for using the Felix GC to track foreign objects.
+  void add_foreign(void *memory, gc_shape_t const *shape) {
+    v_add_foreign(memory, shape);
+  }
+  
+  void remove_foreign(void *memory) {
+    v_remove_foreign(memory);
+  }
 
   void free_all_mem() {
     //fprintf(stderr,"Dispatching to free all mem\n");
@@ -176,6 +185,8 @@ private:
   virtual unsigned long v_collect()=0;
   virtual void v_add_root(void *memory)=0;
   virtual void v_remove_root(void *memory)=0;
+  virtual void v_add_foreign(void *memory, gc_shape_t const *shape)=0;
+  virtual void v_remove_foreign(void *memory)=0;
   virtual void v_free_all_mem()=0;
 
   // It doesn't make any sense to copy collector objects
