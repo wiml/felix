@@ -10,6 +10,7 @@ type btype_qual_t = [
   | `Finaliser of CS.t
   | `Encoder of CS.t
   | `Decoder of CS.t
+  | `Gc_persistent
 ]
 
 type breqs_t = (Flx_types.bid_t * Flx_btype.t list) list
@@ -194,6 +195,7 @@ let iter
     | `Bound_needs_shape t -> f_btype t
     | `Scanner cs -> ()
     | `Finaliser cs -> ()
+    | `Gc_persistent -> ()
     | `Encoder cs -> ()
     | `Decoder cs -> ()
   in
@@ -273,6 +275,7 @@ let map
     | `Bound_needs_shape t -> `Bound_needs_shape (f_btype t)
     | `Scanner cs -> `Scanner cs
     | `Finaliser cs -> `Finaliser cs
+    | `Gc_persistent -> `Gc_persistent
     | `Encoder cs -> `Encoder cs
     | `Decoder cs -> `Decoder cs
   in
@@ -363,6 +366,7 @@ let iter_uses f bbdcl =
     | `Finaliser cs -> ()
     | `Encoder cs -> ()
     | `Decoder cs -> ()
+    | `Gc_persistent -> ()
   in
   match bbdcl with
   | BBDCL_fun (_,_,ps,res,_) ->

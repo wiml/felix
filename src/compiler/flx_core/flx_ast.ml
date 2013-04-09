@@ -294,6 +294,7 @@ and type_qual_t = [
   | `Finaliser of CS.t
   | `Encoder of CS.t
   | `Decoder of CS.t
+  | `Gc_persistent
 ]
 
 and requirement_t =

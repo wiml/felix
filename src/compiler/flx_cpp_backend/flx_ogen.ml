@@ -206,6 +206,12 @@ let rec gen_type_shape s syms bsym_table need_int last_ptr_map primitive_shapes 
           else finaliser, false
         in
 
+        let gcflags = 
+          if List.exists ( fun elt -> elt == `Gc_persistent ) quals then
+              "::flx::gc::generic::gc_flags_persistent"
+          else
+              "::flx::gc::generic::gc_flags_default"
+        in
 
         if complete then
           if not (Hashtbl.mem primitive_shapes name) then
@@ -234,7 +240,7 @@ let rec gen_type_shape s syms bsym_table need_int last_ptr_map primitive_shapes 
             bcat s ("  "^scanner^", // scanner\n");
             bcat s ("  "^encoder_name^", // encoder\n");
             bcat s ("  "^decoder_name^", //decoder\n");
-            bcat s ("  ::flx::gc::generic::gc_flags_default\n");
+            bcat s ("  "^gcflags^"\n");
             bcat s "};\n"
           end else begin
             bcat s ("\n//OFFSETS for abstract type " ^ name ^ " instance\n");

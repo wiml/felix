@@ -8,6 +8,7 @@ type btype_qual_t = [
   | `Finaliser of Flx_code_spec.t
   | `Encoder of Flx_code_spec.t
   | `Decoder of Flx_code_spec.t
+  | `Gc_persistent
 ]
 
 type breqs_t = (Flx_types.bid_t * Flx_btype.t list) list

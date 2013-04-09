@@ -1027,6 +1027,7 @@ and string_of_qual = function
 | `Finaliser cs -> "finaliser(" ^ string_of_code_spec cs ^ ")"
 | `Encoder cs -> "encoder(" ^ string_of_code_spec cs ^ ")"
 | `Decoder cs -> "decoder(" ^ string_of_code_spec cs ^ ")"
+| `Gc_persistent -> "gc_flags(persistent)"
 
 and string_of_bqual bsym_table = function
 | #base_type_qual_t as x -> string_of_base_qual x
@@ -1035,6 +1036,7 @@ and string_of_bqual bsym_table = function
 | `Finaliser cs -> "finaliser(" ^ string_of_code_spec cs ^ ")" 
 | `Encoder cs -> "encoder(" ^ string_of_code_spec cs ^ ")" 
 | `Decoder cs -> "decoder(" ^ string_of_code_spec cs ^ ")" 
+| `Gc_persistent -> "gc_flags(persistent)"
 
 and string_of_quals qs = catmap " " string_of_qual qs
 and string_of_bquals bsym_table qs = catmap " " (string_of_bqual bsym_table) qs

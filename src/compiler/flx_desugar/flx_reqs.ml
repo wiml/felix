@@ -97,6 +97,10 @@ let mkreqs state access parent_ts sr (rqs :raw_req_expr_t) : type_qual_t list *p
         props := `Lvalue:: !props;
         NREQ_true
 
+      | Property_req "gc_persistent" ->
+        quals := `Gc_persistent :: !quals;
+        NREQ_true
+
       | Property_req s ->
         props := mkprop sr s :: !props;
         NREQ_true
